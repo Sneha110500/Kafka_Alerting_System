@@ -12,34 +12,6 @@ Simulates 5 servers continuously publishing CPU, memory, and disk metrics every 
 -> Producer → system-metrics topic → Alert Consumer → alerts topic → Notification Consumer → Slack DM
 
 
-##  Architecture
-
-┌─────────────────────────────────────────────────────┐
-│                                                     │
-│  producer.py                                        │
-│  Simulates 5 servers publishing metrics/second      │
-│  Key = server_id (ordering guaranteed per server)   │
-│              │                                      │
-│              ▼                                      │
-│  Confluent Cloud (Managed Kafka Cluster)            │
-│  ├── Topic: system-metrics (3 partitions)           │
-│  └── Topic: alerts (3 partitions)                   │
-│              │                                      │
-│              ▼                                      │
-│  alert_consumer.py (Consumer Group: alert-processors)│
-│  Applies threshold rules → publishes to alerts topic│
-│              │                                      │
-│              ▼                                      │
-│  notification_consumer.py (Consumer Group:          │
-│  notification-service)                              │
-│  Sends real-time Slack notifications                │
-│              │                                      │
-│              ▼                                      │
-│         📱 Slack DM — Instant Alert!                │
-│                                                     │
-└─────────────────────────────────────────────────────┘
-
-
 ## Alert Thresholds
 
 | Metric | Warning | Critical |
@@ -116,10 +88,10 @@ py notification_consumer.py
 ## 📊 Sample Output
 
 ```
-📤 Publishing → server-4 | CPU: 93.8% | Memory: 77.0% | Disk: 94.4%
-🚨 CRITICAL ALERT → server-4 | cpu_percent: 93.8% (threshold: 80%)
-✅ Alert published → Partition: 1, Offset: 2792
-📱 Slack notified → CRITICAL on server-4
+Publishing → server-4 | CPU: 93.8% | Memory: 77.0% | Disk: 94.4%
+CRITICAL ALERT → server-4 | cpu_percent: 93.8% (threshold: 80%)
+Alert published → Partition: 1, Offset: 2792
+Slack notified → CRITICAL on server-4
 ```
 
 
